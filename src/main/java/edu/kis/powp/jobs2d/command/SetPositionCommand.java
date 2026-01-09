@@ -1,6 +1,7 @@
 package edu.kis.powp.jobs2d.command;
 
 import edu.kis.powp.jobs2d.Job2dDriver;
+import edu.kis.powp.jobs2d.visitor.CommandVisitor;
 
 /**
  * Implementation of Job2dDriverCommand for setPosition command functionality.
@@ -20,4 +21,8 @@ public class SetPositionCommand implements DriverCommand {
         driver.setPosition(posX, posY);
     }
 
+    @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visit(this);
+    }
 }
