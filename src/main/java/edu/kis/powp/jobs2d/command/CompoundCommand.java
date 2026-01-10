@@ -23,8 +23,9 @@ public class CompoundCommand implements ICompoundCommand {
      * 
      * @param commands the list of commands to be executed in sequence
      */
-    private CompoundCommand(List<DriverCommand> commands) {
+    private CompoundCommand(List<DriverCommand> commands, String name) {
         this.commands = Collections.unmodifiableList(new ArrayList<>(commands));
+        this.name = name;
     }
 
     /**
@@ -56,8 +57,8 @@ public class CompoundCommand implements ICompoundCommand {
      * @param commands the list of commands to be executed in sequence
      * @return a new CompoundCommand instance containing the provided commands
      */
-    public static CompoundCommand fromListOfCommands(List<DriverCommand> commands) {
-        return new CompoundCommand(commands);
+    public static CompoundCommand fromListOfCommands(List<DriverCommand> commands, String name) {
+        return new CompoundCommand(commands, name);
     }
 
     /**
@@ -71,7 +72,7 @@ public class CompoundCommand implements ICompoundCommand {
     public CompoundCommand concatCommands(List<DriverCommand> commands) {
         List<DriverCommand> newCommands = new ArrayList<>(this.commands);
         newCommands.addAll(commands);
-        return new CompoundCommand(newCommands);
+        return new CompoundCommand(newCommands, this.name);
     }
 
     /**
@@ -98,6 +99,7 @@ public class CompoundCommand implements ICompoundCommand {
      */
     public static class Builder {
         private final List<DriverCommand> commands = new ArrayList<>();
+        private String name = "Compound Command";
 
         /**
          * Adds multiple commands to the builder.
@@ -109,6 +111,7 @@ public class CompoundCommand implements ICompoundCommand {
             this.commands.addAll(commands);
             return this;
         }
+        
 
         /**
          * Adds all commands from another compound command to the builder.
@@ -146,12 +149,23 @@ public class CompoundCommand implements ICompoundCommand {
         }
 
         /**
+         * Sets the name of the compound command being built.
+         * 
+         * @param name the name to set
+         * @return this builder instance for method chaining
+         */
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        /**
          * Builds the CompoundCommand instance with all added commands.
          * 
          * @return a new CompoundCommand instance containing all added commands
          */
         public CompoundCommand build() {
-            return new CompoundCommand(commands);
+            return new CompoundCommand(commands, name);
         }
     }
 
@@ -183,12 +197,4 @@ public class CompoundCommand implements ICompoundCommand {
         return name;
     }
 
-    /**
-     * Sets the name of this compound command.
-     * 
-     * @param name the new name for the compound command
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
 }

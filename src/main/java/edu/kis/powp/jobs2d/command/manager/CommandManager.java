@@ -31,9 +31,7 @@ public class CommandManager {
      * @param name        name of the command.
      */
     public synchronized void setCurrentCommand(List<DriverCommand> commandList, String name) {
-        CompoundCommand compoundCommand = CompoundCommand.fromListOfCommands(commandList);
-        compoundCommand.setName(name);
-       
+        CompoundCommand compoundCommand = CompoundCommand.fromListOfCommands(commandList, name);
         setCurrentCommand(compoundCommand);
     }
 
