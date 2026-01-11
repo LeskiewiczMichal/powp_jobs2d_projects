@@ -8,30 +8,31 @@ import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 
 /**
  * Interface for the Visitor pattern to traverse and process drivers.
+ * Uses method overloading for clean dispatch.
  */
 public interface DriverVisitor {
 
     /**
-     * Visits a AnimatedDriverDecorator.
-     * @param AnimatedDriverDecorator driver to visit.
+     * Visits an AnimatedDriverDecorator.
+     * @param animatedDriverDecorator driver to visit
      */
     void visit(AnimatedDriverDecorator animatedDriverDecorator);
 
     /**
-     * Visits an DriverComposite.
-     *  @param DriverComposite driver to visit.
+     * Visits a DriverComposite.
+     * @param driverComposite driver to visit
      */
     void visit(DriverComposite driverComposite);
 
     /**
      * Visits a LoggerDriver.
-     * @param LoggerDriver the driver to visit.
+     * @param loggerDriver the driver to visit
      */
     void visit(LoggerDriver loggerDriver);
 
     /**
      * Visits a LineDriverAdapter.
-     * @param LineDriverAdapter the adapter to visit.
+     * @param lineDriverAdapter the adapter to visit
      */
     void visit(LineDriverAdapter lineDriverAdapter);
 }

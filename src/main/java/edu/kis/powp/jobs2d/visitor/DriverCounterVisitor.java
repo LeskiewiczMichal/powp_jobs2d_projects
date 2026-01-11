@@ -2,17 +2,19 @@ package edu.kis.powp.jobs2d.visitor;
 
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
+
+import java.util.Iterator;
+
 import edu.kis.powp.jobs2d.Job2dDriver;
 import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
-
-import java.util.Iterator;
 
 public class DriverCounterVisitor implements DriverVisitor {
 
     private int animatedDriverDecoratorCount = 0;
     private int loggerDriverCount = 0;
     private int lineDriverAdapterCount = 0;
+    private int driverCompositeCount = 0;
     
     private DriverCounterVisitor() {}
 
@@ -21,7 +23,8 @@ public class DriverCounterVisitor implements DriverVisitor {
         private final int loggerDriverCount;
         private final int lineDriverAdapterCount;
 
-        public DriverStats(int animatedDriverDecoratorCount, int loggerDriverCount, int lineDriverAdapterCount) {
+        public DriverStats(int animatedDriverDecoratorCount, int loggerDriverCount, 
+                          int lineDriverAdapterCount) {
             this.animatedDriverDecoratorCount = animatedDriverDecoratorCount;
             this.loggerDriverCount = loggerDriverCount;
             this.lineDriverAdapterCount = lineDriverAdapterCount;
@@ -38,16 +41,17 @@ public class DriverCounterVisitor implements DriverVisitor {
         public int getLineDriverAdapterCount() {
             return lineDriverAdapterCount;
         }
-        
+    
         public int getCount() {
             return animatedDriverDecoratorCount + loggerDriverCount + lineDriverAdapterCount;
         }
     }
 
-    public static DriverStats countDrivers(VisitableJob2dDriver driver) {
+    public static DriverStats countDrivers(Job2dDriver driver) {
         DriverCounterVisitor visitor = new DriverCounterVisitor();
-        driver.accept(visitor);
-        return new DriverStats(visitor.animatedDriverDecoratorCount, visitor.loggerDriverCount, visitor.lineDriverAdapterCount);
+        DriverVisitorDispatcher.dispatch(visitor, driver);
+        return new DriverStats(visitor.animatedDriverDecoratorCount, visitor.loggerDriverCount, 
+                              visitor.lineDriverAdapterCount);
     }
 
     @Override
@@ -71,7 +75,7 @@ public class DriverCounterVisitor implements DriverVisitor {
 
         while(iterator.hasNext()) {
             Job2dDriver driver = iterator.next();
-            ((VisitableJob2dDriver) driver).accept(this);
+            DriverVisitorDispatcher.dispatch(this, driver);
         }
     }
 }
