@@ -75,7 +75,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
 
     private void clearCommand() {
         commandManager.clearCurrentCommand();
-        updateCurrentCommandField();
+        currentCommandField.setText(commandManager.getCurrentCommandString());
     }
 
     public void updateCurrentCommandField() {
@@ -87,7 +87,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         this.updateObserverListField();
     }
 
-    private void updateObserverListField() {
+    public void updateObserverListField() {
         observerListString = "";
         List<Subscriber> commandChangeSubscribers = commandManager.getChangePublisher().getSubscribers();
         for (Subscriber observer : commandChangeSubscribers) {

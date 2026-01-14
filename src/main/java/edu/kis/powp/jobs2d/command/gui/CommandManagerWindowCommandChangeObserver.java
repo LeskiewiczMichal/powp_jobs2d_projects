@@ -12,12 +12,13 @@ public class CommandManagerWindowCommandChangeObserver implements Subscriber {
     }
 
     public String toString() {
-        return "Current command change observer for command manager window";
+        return "Observer for: " + commandManagerWindow.getTitle();
     }
 
     @Override
     public void update() {
         commandManagerWindow.updateCurrentCommandField();
+        commandManagerWindow.updateObserverListField();
     }
 
 }
