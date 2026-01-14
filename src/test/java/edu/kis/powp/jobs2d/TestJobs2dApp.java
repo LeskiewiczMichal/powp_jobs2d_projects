@@ -91,7 +91,7 @@ public class TestJobs2dApp {
         Job2dDriver specialLineWithLoggerDriver = new DriverComposite(Arrays.asList(specialLineDriver, loggerDriver));
         DriverFeature.addDriver("Logger + Special line", specialLineWithLoggerDriver);
 
-        RecordingDriverDecorator recordingDriver = new RecordingDriverDecorator(basicLineDriver);    // zmienić na czerwoną linię!
+        RecordingDriverDecorator recordingDriver = new RecordingDriverDecorator(basicLineDriver);
         SelectLoadRecordedCommandOptionListener selectLoadRecordedCommandOptionListener = new SelectLoadRecordedCommandOptionListener(recordingDriver);
         application.addTest("Stop recording & Load recorded command", selectLoadRecordedCommandOptionListener);
         DriverFeature.addDriver("Recording Driver", recordingDriver);
