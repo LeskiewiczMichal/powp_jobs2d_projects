@@ -28,7 +28,6 @@ public class RecordingDriverDecorator implements VisitableJob2dDriver {
 
     public void stopRecording() {
         recordedCommands = commandBuilder.build();
-        setPosition(0, 0);
     }
 
     public CompoundCommand getRecordedCommands() {
