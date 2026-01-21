@@ -1,0 +1,26 @@
+{
+  "name": "Nested Shapes",
+  "commands": [
+    {
+      "type": "complex",
+      "name": "Square",
+      "commands": [
+        { "type": "setPosition", "x": 0, "y": 0 },
+        { "type": "operateTo", "x": 100, "y": 0 },
+        { "type": "operateTo", "x": 100, "y": 100 },
+        { "type": "operateTo", "x": 0, "y": 100 },
+        { "type": "operateTo", "x": 0, "y": 0 }
+      ]
+    },
+    {
+      "type": "complex",
+      "name": "Triangle",
+      "commands": [
+        { "type": "setPosition", "x": 150, "y": 0 },
+        { "type": "operateTo", "x": 250, "y": 0 },
+        { "type": "operateTo", "x": 200, "y": 100 },
+        { "type": "operateTo", "x": 150, "y": 0 }
+      ]
+    }
+  ]
+}
