@@ -17,6 +17,12 @@ public class DriverDeepCopyVisitor implements DriverVisitor {
 
     private VisitableJob2dDriver copy;
 
+    public static VisitableJob2dDriver createDeepCopyOf(VisitableJob2dDriver driver) {
+        DriverDeepCopyVisitor visitor = new DriverDeepCopyVisitor();
+        driver.accept(visitor);
+        return visitor.getCopy();
+    }
+
     public VisitableJob2dDriver getCopy() {
         return copy;
     }

@@ -28,9 +28,7 @@ public class AdditionalVisitorTest {
         LoggerDriver logger = new LoggerDriver();
         UsageTrackingDriverDecorator tracked = new UsageTrackingDriverDecorator(logger, "tracked");
 
-        DriverDeepCopyVisitor visitor = new DriverDeepCopyVisitor();
-        tracked.accept(visitor);
-        VisitableJob2dDriver copy = visitor.getCopy();
+        VisitableJob2dDriver copy = DriverDeepCopyVisitor.createDeepCopyOf(tracked);
 
         if (!(copy instanceof UsageTrackingDriverDecorator)) {
             throw new RuntimeException("Copy is not UsageTrackingDriverDecorator");
