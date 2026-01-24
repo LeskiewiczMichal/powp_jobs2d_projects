@@ -15,11 +15,8 @@ import edu.kis.powp.jobs2d.command.gui.CommandPreviewWindow;
 import edu.kis.powp.jobs2d.command.gui.CommandPreviewWindowObserver;
 import edu.kis.powp.jobs2d.command.gui.SelectImportCommandOptionListener;
 import edu.kis.powp.jobs2d.command.importer.JsonCommandImportParser;
-import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.*;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
-import edu.kis.powp.jobs2d.drivers.RecordingDriverDecorator;
-import edu.kis.powp.jobs2d.drivers.DriverComposite;
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 import edu.kis.powp.jobs2d.events.*;
@@ -121,6 +118,16 @@ public class TestJobs2dApp {
         UsageTrackingDriverDecorator monitoredSpecialLine = new UsageTrackingDriverDecorator(specialLineDriver, "Special line [monitored]");
         MonitoringFeature.registerMonitoredDriver("Special line [monitored]", monitoredSpecialLine);
         DriverFeature.addDriver("Special line [monitored]", monitoredSpecialLine);
+
+        // Add Device Maintenance Panel
+        DeviceMaintenancePanel devicePanel = new DeviceMaintenancePanel();
+        application.addWindowComponent("Device Maintenance", devicePanel);
+        VisitableJob2dDriver coreDriver = new LineDriverAdapter(DrawerFeature.getDrawerController(), LineFactory.getBasicLine(), "basic");
+        InkUsageDriverDecorator inkDecorator = new InkUsageDriverDecorator(coreDriver, 500.0);
+        ServiceDriverDecorator fullSimulationDriver = new ServiceDriverDecorator(inkDecorator, 40);
+        devicePanel.setInkDecorator(inkDecorator);
+        devicePanel.setMaintenanceDecorator(fullSimulationDriver);
+        DriverFeature.addDriver("Device Maintenance simulation", fullSimulationDriver);
 
         // Set default driver
         DriverFeature.getDriverManager().setCurrentDriver(basicLineDriver);
