@@ -1,12 +1,17 @@
 package edu.kis.powp.jobs2d.features;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
 import edu.kis.legacy.drawer.panel.DrawPanelController;
+import edu.kis.legacy.drawer.shape.LineFactory;
 import edu.kis.powp.appbase.Application;
 import edu.kis.powp.jobs2d.canvas.CanvasManager;
 import edu.kis.powp.jobs2d.canvas.ICanvas;
+import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
+import edu.kis.powp.jobs2d.drivers.transformation.TransformStrategy;
+import edu.kis.powp.jobs2d.drivers.transformation.TransformerDriverDecorator;
 import edu.kis.powp.jobs2d.events.SelectCanvasOptionListener;
 
 public class CanvasFeature {
@@ -23,24 +28,40 @@ public class CanvasFeature {
         return canvasOverlay.getController();
     }
 
+    public static CanvasLayerPanel attachCanvasOverlay(JComponent panel) {
+        return attachCanvasOverlay(panel, null);
+    }
+
+    public static CanvasLayerPanel attachCanvasOverlay(JComponent panel, TransformStrategy transform) {
+        // OverlayLayout is used to add the canvas overlay on top of the drawing panel
+        // so changing the canvas will not affect the drawing panel
+        if (!(panel.getLayout() instanceof OverlayLayout)) {
+            panel.setLayout(new OverlayLayout(panel));
+        }
+
+        CanvasLayerPanel overlay = new CanvasLayerPanel();
+        if (transform != null) {
+            LineDriverAdapter baseDriver = new LineDriverAdapter(overlay.getController(), LineFactory.getSpecialLine(), "canvas");
+            overlay.setDriver(new TransformerDriverDecorator(baseDriver, transform));
+        }
+        overlay.setCanvas(canvasManager.getCurrentCanvas());
+        canvasManager.getChangePublisher().addSubscriber(() -> {
+            overlay.setCanvas(canvasManager.getCurrentCanvas());
+            overlay.revalidate();
+            overlay.repaint();
+        });
+        panel.add(overlay);
+
+        return overlay;
+    }
+
     public static void setupCanvasPlugin(Application app) {
         CanvasFeature.app = app;
         JPanel panel = ViewFeature.getDrawingPanel();
         if (panel == null) {
             panel = app.getFreePanel();
         }
-        // OverlayLayout is used to add the canvas overlay on top of the drawing panel
-        // so changing the canvas will not affect the drawing panel
-        panel.setLayout(new OverlayLayout(panel));
-
-        canvasOverlay = new CanvasLayerPanel();
-        canvasOverlay.setCanvas(canvasManager.getCurrentCanvas());
-
-        canvasManager.getChangePublisher().addSubscriber(() -> {
-            canvasOverlay.setCanvas(canvasManager.getCurrentCanvas());
-        });
-
-        panel.add(canvasOverlay);
+        canvasOverlay = attachCanvasOverlay(panel);
 
         app.addComponentMenu(CanvasFeature.class, "Canvas");
     }
