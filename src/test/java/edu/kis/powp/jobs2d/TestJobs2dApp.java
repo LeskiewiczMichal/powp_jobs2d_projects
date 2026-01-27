@@ -48,12 +48,15 @@ public class TestJobs2dApp {
                 DriverFeature.getDriverManager());
         SelectCountCommandOptionListener selectCountCommandOptionListener = new SelectCountCommandOptionListener(CommandsFeature.getDriverCommandManager());
         SelectCountDriverOptionListener selectCountDriverOptionListener = new SelectCountDriverOptionListener();
+        SelectValidateCanvasBoundsOptionListener selectValidateCanvasBoundsOptionListener = new SelectValidateCanvasBoundsOptionListener(
+                CommandsFeature.getDriverCommandManager(), logger);
 
         application.addTest("Figure Joe 1", selectTestFigureOptionListener);
         application.addTest("Figure Joe 2", selectTestFigure2OptionListener);
         application.addTest("Figure House - CompoundCommand", selectTestCompoundCommandOptionListener);
         application.addTest("Count commands - Visitor", selectCountCommandOptionListener);
         application.addTest("Count drivers - Visitor", selectCountDriverOptionListener);
+        application.addTest("Validate Canvas Bounds", selectValidateCanvasBoundsOptionListener);
     }
 
     /**
@@ -110,12 +113,6 @@ public class TestJobs2dApp {
         application.addTest("Stop recording & Load recorded command", selectLoadRecordedCommandOptionListener);
         DriverFeature.addDriver("Recording Driver", recordingDriver);
 
-        CanvasBoundaryDriverDecorator canvasBoundaryDriver = new CanvasBoundaryDriverDecorator(basicLineDriver);
-        DriverFeature.addDriver("Canvas Boundary Driver", canvasBoundaryDriver);
-
-        DriverComposite recordingBoundaryDriver = new DriverComposite(Arrays.asList(canvasBoundaryDriver, recordingDriver));
-        DriverFeature.addDriver("Recording + Canvas Boundary Driver", recordingBoundaryDriver);
-        
         // Add monitored versions of drivers
         UsageTrackingDriverDecorator monitoredBasicLine = new UsageTrackingDriverDecorator(basicLineDriver, "Basic line [monitored]");
         MonitoringFeature.registerMonitoredDriver("Basic line [monitored]", monitoredBasicLine);

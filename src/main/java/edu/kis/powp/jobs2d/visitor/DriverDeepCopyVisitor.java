@@ -3,7 +3,7 @@ package edu.kis.powp.jobs2d.visitor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import edu.kis.powp.jobs2d.drivers.CanvasBoundaryDriverDecorator;
+
 import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
@@ -81,11 +81,5 @@ public class DriverDeepCopyVisitor implements DriverVisitor {
         copy = new RecordingDriverDecorator(targetCopy);
     }
 
-       @Override
-    public void visit(CanvasBoundaryDriverDecorator canvasBoundaryDriverDecorator) {
-        canvasBoundaryDriverDecorator.getDelegate().accept(this);
-        VisitableJob2dDriver targetCopy = copy;
-        copy = new CanvasBoundaryDriverDecorator(targetCopy);
-    }
 
 }
