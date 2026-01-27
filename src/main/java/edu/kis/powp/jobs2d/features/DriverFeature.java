@@ -115,8 +115,6 @@ public class DriverFeature {
 
         VisitableJob2dDriver flippedDriver = DriverFeatureFactory.createFlipDriver(basicLineDriver, true, false);
         DriverFeature.addDriver("Basic Line + Flip Horizontal", flippedDriver);
-
-        DriverFeature.updateDriverInfo();
     }
 
 }
