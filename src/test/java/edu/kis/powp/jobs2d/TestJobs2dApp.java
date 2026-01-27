@@ -15,11 +15,8 @@ import edu.kis.powp.jobs2d.command.gui.CommandPreviewWindow;
 import edu.kis.powp.jobs2d.command.gui.CommandPreviewWindowObserver;
 import edu.kis.powp.jobs2d.command.gui.SelectImportCommandOptionListener;
 import edu.kis.powp.jobs2d.command.importer.JsonCommandImportParser;
-import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.*;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
-import edu.kis.powp.jobs2d.drivers.RecordingDriverDecorator;
-import edu.kis.powp.jobs2d.drivers.DriverComposite;
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 import edu.kis.powp.jobs2d.events.*;
@@ -52,12 +49,15 @@ public class TestJobs2dApp {
                 DriverFeature.getDriverManager());
         SelectCountCommandOptionListener selectCountCommandOptionListener = new SelectCountCommandOptionListener(CommandsFeature.getDriverCommandManager());
         SelectCountDriverOptionListener selectCountDriverOptionListener = new SelectCountDriverOptionListener();
+        SelectValidateCanvasBoundsOptionListener selectValidateCanvasBoundsOptionListener = new SelectValidateCanvasBoundsOptionListener(
+                CommandsFeature.getDriverCommandManager(), logger);
 
         application.addTest("Figure Joe 1", selectTestFigureOptionListener);
         application.addTest("Figure Joe 2", selectTestFigure2OptionListener);
         application.addTest("Figure House - CompoundCommand", selectTestCompoundCommandOptionListener);
         application.addTest("Count commands - Visitor", selectCountCommandOptionListener);
         application.addTest("Count drivers - Visitor", selectCountDriverOptionListener);
+        application.addTest("Validate Canvas Bounds", selectValidateCanvasBoundsOptionListener);
     }
 
     /**
@@ -113,7 +113,7 @@ public class TestJobs2dApp {
         SelectLoadRecordedCommandOptionListener selectLoadRecordedCommandOptionListener = new SelectLoadRecordedCommandOptionListener(recordingDriver);
         application.addTest("Stop recording & Load recorded command", selectLoadRecordedCommandOptionListener);
         DriverFeature.addDriver("Recording Driver", recordingDriver);
-        
+
         // Add monitored versions of drivers
         UsageTrackingDriverDecorator monitoredBasicLine = new UsageTrackingDriverDecorator(basicLineDriver, "Basic line [monitored]");
         MonitoringFeature.registerMonitoredDriver("Basic line [monitored]", monitoredBasicLine);
