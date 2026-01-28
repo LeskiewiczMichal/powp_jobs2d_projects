@@ -19,6 +19,7 @@ public class JsonCommandImportParser implements CommandImportParser {
     private static final String Y_KEY = "y";
     private static final String TYPE_SET_POSITION = "setPosition";
     private static final String TYPE_OPERATE_TO = "operateTo";
+    private static final String TYPE_COMPLEX = "complex";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -86,6 +87,18 @@ public class JsonCommandImportParser implements CommandImportParser {
             int x = readRequiredInt(commandNode, X_KEY);
             int y = readRequiredInt(commandNode, Y_KEY);
             return new OperateToCommand(x, y);
+        }
+
+        if (TYPE_COMPLEX.equals(type)) {
+            String name = "Complex";
+            if (commandNode.has(NAME_KEY)) {
+                name = commandNode.get(NAME_KEY).asText();
+            }
+            if (!commandNode.has(COMMANDS_KEY) || !commandNode.get(COMMANDS_KEY).isArray()) {
+                throw new CommandImportException("Complex command must have 'commands' array");
+            }
+            List<DriverCommand> subCommands = parseCommandList(commandNode.get(COMMANDS_KEY));
+            return edu.kis.powp.jobs2d.command.CompoundCommand.fromListOfCommands(subCommands, name);
         }
 
         throw new CommandImportException("Unknown command type: " + type);

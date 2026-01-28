@@ -17,6 +17,7 @@ import edu.kis.powp.observer.Subscriber;
 public class CommandManagerWindow extends JFrame implements WindowComponent {
 
     private CommandManager commandManager;
+    private CommandPreviewWindow commandPreviewWindow;
 
     private JTextArea currentCommandField;
     private JButton btnImportCommand;
@@ -72,6 +73,14 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         c.weighty = 1;
         content.add(btnClearObservers, c);
 
+        JButton btnEditCommand = new JButton("Edit command");
+        btnEditCommand.addActionListener((ActionEvent e) -> new CommandEditorWindow(commandManager, commandPreviewWindow).setVisible(true));
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.weighty = 1;
+        content.add(btnEditCommand, c);
+
         btnImportCommand = new JButton("Import JSON");
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
@@ -118,6 +127,10 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
 
     public void setImportActionListener(java.awt.event.ActionListener actionListener) {
         btnImportCommand.addActionListener(actionListener);
+    }
+
+    public void setPreviewWindow(CommandPreviewWindow commandPreviewWindow) {
+        this.commandPreviewWindow = commandPreviewWindow;
     }
 
 }
