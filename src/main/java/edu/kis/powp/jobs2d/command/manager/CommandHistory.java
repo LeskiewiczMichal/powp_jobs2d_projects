@@ -16,7 +16,7 @@ import edu.kis.powp.jobs2d.command.DriverCommand;
  */
 public class CommandHistory {
     
-    private final List<DriverCommand> history = new ArrayList<>();
+    private final List<CommandHistoryEntry> history = new ArrayList<>();
     
     /**
      * Adds a command to the history.
@@ -24,16 +24,16 @@ public class CommandHistory {
      */
     public synchronized void addCommand(DriverCommand command) {
         // Avoid adding consecutive nulls
-        if (command == null && !history.isEmpty() && history.get(history.size() - 1) == null) {
+        if (command == null && !history.isEmpty() && history.get(history.size() - 1).getCommand() == null) {
             return;
         }
-        history.add(command);
+        history.add(new CommandHistoryEntry(command));
     }
     
     /**
-     * Returns an immutable copy of the command history.
+     * Returns an immutable copy of the command history entries.
      */
-    public synchronized List<DriverCommand> getHistory() {
+    public synchronized List<CommandHistoryEntry> getHistory() {
         return Collections.unmodifiableList(new ArrayList<>(history));
     }
     
@@ -47,10 +47,17 @@ public class CommandHistory {
     }
     
     /**
+     * Retrieves a history entry at a specific index.
+     */
+    public synchronized CommandHistoryEntry getEntry(int index) {
+        return history.get(index);
+    }
+    
+    /**
      * Retrieves a command at a specific index in history.
      */
     public synchronized DriverCommand getCommand(int index) {
-        return history.get(index);
+        return history.get(index).getCommand();
     }
     
     /**
@@ -58,6 +65,31 @@ public class CommandHistory {
      */
     public synchronized void clear() {
         history.clear();
+    }
+    
+    /**
+     * Removes duplicate consecutive commands from history.
+     * Keeps the first occurrence of each consecutive group.
+     */
+    public synchronized void removeDuplicates() {
+        if (history.size() <= 1) {
+            return;
+        }
+        
+        List<CommandHistoryEntry> deduplicated = new ArrayList<>();
+        deduplicated.add(history.get(0));
+        
+        for (int i = 1; i < history.size(); i++) {
+            DriverCommand current = history.get(i).getCommand();
+            DriverCommand previous = history.get(i - 1).getCommand();
+            
+            if (current != previous) {
+                deduplicated.add(history.get(i));
+            }
+        }
+        
+        history.clear();
+        history.addAll(deduplicated);
     }
     
     /**
