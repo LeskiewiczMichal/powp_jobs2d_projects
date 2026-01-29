@@ -1,5 +1,6 @@
 package edu.kis.powp.jobs2d.drivers;
 
+import edu.kis.powp.jobs2d.features.MonitoringFeature;
 import edu.kis.powp.jobs2d.visitor.DriverVisitor;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 
@@ -62,6 +63,9 @@ public class UsageTrackingDriverDecorator implements VisitableJob2dDriver {
      * @param drawing {@code true} if this is a drawing operation; {@code false} for repositioning.
      */
     private void registerMovement(int x, int y, boolean drawing) {
+        if (!MonitoringFeature.isMonitoringEnabled()) {
+            return;
+        }
         double segment = Math.hypot(x - lastX, y - lastY);
         travelDistance += segment;
         if (drawing) {

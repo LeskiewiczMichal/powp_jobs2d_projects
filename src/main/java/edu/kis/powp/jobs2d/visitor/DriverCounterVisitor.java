@@ -49,6 +49,7 @@ public class DriverCounterVisitor implements DriverVisitor {
             return animatedDriverDecoratorCount;
         }
 
+
         public int getLoggerDriverCount() {
             return loggerDriverCount;
         }
@@ -138,4 +139,5 @@ public class DriverCounterVisitor implements DriverVisitor {
         this.recordingDriverDecoratorCount++;
         recordingDriverDecorator.getDelegate().accept(this);
     }
+
 }

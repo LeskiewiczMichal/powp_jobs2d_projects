@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import edu.kis.legacy.drawer.shape.ILine;
+
 import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.CanvasLimitedDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
@@ -87,4 +88,6 @@ public class DriverDeepCopyVisitor implements DriverVisitor {
         VisitableJob2dDriver targetCopy = copy;
         copy = new RecordingDriverDecorator(targetCopy);
     }
+
+
 }

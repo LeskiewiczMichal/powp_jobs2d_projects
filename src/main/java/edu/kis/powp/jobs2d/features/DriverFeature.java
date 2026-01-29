@@ -1,9 +1,9 @@
 package edu.kis.powp.jobs2d.features;
 
 import edu.kis.powp.appbase.Application;
-import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 import edu.kis.powp.jobs2d.drivers.DriverManager;
 import edu.kis.powp.jobs2d.drivers.SelectDriverMenuOptionListener;
+import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 
 public class DriverFeature implements IFeature {
 
@@ -16,6 +16,8 @@ public class DriverFeature implements IFeature {
     public static DriverManager getDriverManager() {
         return driverManager;
     }
+
+    private static DriverConfigurationStrategy configStrategy = (name, driver) -> driver;
 
     @Override
     public void setup(Application application) {
@@ -41,7 +43,9 @@ public class DriverFeature implements IFeature {
      * @param driver VisitableJob2dDriver object.
      */
     public static void addDriver(String name, VisitableJob2dDriver driver) {
-        SelectDriverMenuOptionListener listener = new SelectDriverMenuOptionListener(driver, driverManager);
+        VisitableJob2dDriver finalDriver = configStrategy.configure(name, driver);
+
+        SelectDriverMenuOptionListener listener = new SelectDriverMenuOptionListener(finalDriver, driverManager);
         app.addComponentMenuElement(DriverFeature.class, name, listener);
     }
 
@@ -50,6 +54,10 @@ public class DriverFeature implements IFeature {
      */
     public static void updateDriverInfo() {
         app.updateInfo(driverManager.getCurrentDriver().toString());
+    }
+
+    public static void setConfigurationStrategy(DriverConfigurationStrategy strategy) {
+        configStrategy = strategy;
     }
 
     @Override

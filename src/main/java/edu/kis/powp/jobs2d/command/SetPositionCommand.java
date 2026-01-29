@@ -21,7 +21,6 @@ public class SetPositionCommand implements DriverCommand {
     }
 
     public int getPosY() {
-
 		return posY;
     }
 

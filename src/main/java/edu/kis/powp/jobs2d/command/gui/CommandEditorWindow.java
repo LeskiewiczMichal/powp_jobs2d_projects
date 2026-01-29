@@ -3,6 +3,8 @@ package edu.kis.powp.jobs2d.command.gui;
 import edu.kis.powp.jobs2d.command.CompoundCommand;
 import edu.kis.powp.jobs2d.command.DriverCommand;
 import edu.kis.powp.jobs2d.command.manager.CommandManager;
+import edu.kis.powp.jobs2d.drivers.transformation.*;
+import edu.kis.powp.jobs2d.visitor.CommandTransformerVisitor;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -70,8 +72,11 @@ public class CommandEditorWindow extends JFrame {
         JButton saveButton = new JButton("Save");
         JButton cancelButton = new JButton("Cancel");
         JButton previewButton = new JButton("Preview");
+        JButton transformButton = new JButton("Transform");
         JButton upButton = new JButton("Move Up");
         JButton downButton = new JButton("Move Down");
+
+        JPopupMenu transformMenu = new JPopupMenu();
 
         saveButton.addActionListener(e -> saveChanges());
         cancelButton.addActionListener(e -> cancelChanges());
@@ -80,16 +85,24 @@ public class CommandEditorWindow extends JFrame {
                 this.previewWindow.setVisible(true);
             }
         });
+        transformButton.addActionListener(e -> transformMenu.show(transformButton, 0, transformButton.getHeight()));
         upButton.addActionListener(e -> moveUp());
         downButton.addActionListener(e -> moveDown());
 
         buttonPanel.add(upButton);
         buttonPanel.add(downButton);
         buttonPanel.add(previewButton);
+        buttonPanel.add(transformButton);
         buttonPanel.add(saveButton);
         buttonPanel.add(cancelButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
+
+        transformMenu.add(new JMenuItem("Scale (1.5x)")).addActionListener(e -> applyTransformation(new ScaleStrategy(1.5)));
+        transformMenu.add(new JMenuItem("Rotate (90°)")).addActionListener(e -> applyTransformation(new RotateStrategy(90)));
+        transformMenu.add(new JMenuItem("Flip (Horizontal)")).addActionListener(e -> applyTransformation(new FlipStrategy(true, false)));
+        transformMenu.add(new JMenuItem("Flip (Vertical)")).addActionListener(e -> applyTransformation(new FlipStrategy(false, true)));
+        transformMenu.add(new JMenuItem("Shift (10, 10)")).addActionListener(e -> applyTransformation(new ShiftStrategy(10, 10)));
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -281,5 +294,16 @@ public class CommandEditorWindow extends JFrame {
             return CompoundCommand.fromListOfCommands(children, ((GuiCompositeCommandRepresentation) userObj).name);
         }
         return null; // Should not happen
+    }
+
+    private void applyTransformation(TransformStrategy strategy) {
+        DriverCommand currentCmd = rebuildCommand();
+
+        CommandTransformerVisitor visitor = new CommandTransformerVisitor(strategy);
+        currentCmd.accept(visitor);
+
+        commandManager.setCurrentCommand(visitor.getTransformedCommand());
+
+        loadCommands();
     }
 }

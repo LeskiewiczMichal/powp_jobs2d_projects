@@ -1,5 +1,6 @@
 package edu.kis.powp.jobs2d;
 
+import edu.kis.powp.jobs2d.features.MonitoringDriverConfigurationStrategy;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
@@ -13,17 +14,19 @@ import edu.kis.powp.jobs2d.command.gui.CommandManagerWindow;
 import edu.kis.powp.jobs2d.command.gui.CommandManagerWindowCommandChangeObserver;
 import edu.kis.powp.jobs2d.command.gui.CommandPreviewWindow;
 import edu.kis.powp.jobs2d.command.gui.CommandPreviewWindowObserver;
+import edu.kis.powp.jobs2d.command.gui.CommandHistoryWindow;
 import edu.kis.powp.jobs2d.command.gui.SelectImportCommandOptionListener;
 import edu.kis.powp.jobs2d.command.importer.JsonCommandImportParser;
+import edu.kis.powp.jobs2d.command.manager.CommandManager;
 import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
-import edu.kis.powp.jobs2d.drivers.CanvasLimitedDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.*;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
 import edu.kis.powp.jobs2d.drivers.RecordingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.drivers.strategy.OnCanvasExceededLogWarning;
 import edu.kis.powp.jobs2d.drivers.strategy.OnCanvasExceededStrategy;
+import edu.kis.powp.jobs2d.drivers.transformation.*;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 import edu.kis.powp.jobs2d.events.*;
 import edu.kis.powp.jobs2d.features.CanvasFeature;
@@ -34,7 +37,6 @@ import edu.kis.powp.jobs2d.features.MonitoringFeature;
 import edu.kis.powp.jobs2d.features.FeatureManager;
 import edu.kis.powp.jobs2d.features.ViewFeature;
 
-import edu.kis.powp.jobs2d.drivers.transformation.DriverFeatureFactory;
 import edu.kis.powp.jobs2d.canvas.CanvasFactory;
 
 
@@ -55,12 +57,15 @@ public class TestJobs2dApp {
                 DriverFeature.getDriverManager());
         SelectCountCommandOptionListener selectCountCommandOptionListener = new SelectCountCommandOptionListener(CommandsFeature.getDriverCommandManager());
         SelectCountDriverOptionListener selectCountDriverOptionListener = new SelectCountDriverOptionListener();
-
+        SelectValidateCanvasBoundsOptionListener selectValidateCanvasBoundsOptionListener = new SelectValidateCanvasBoundsOptionListener(
+                CommandsFeature.getDriverCommandManager(), logger);
+        
         application.addTest("Figure Joe 1", selectTestFigureOptionListener);
         application.addTest("Figure Joe 2", selectTestFigure2OptionListener);
         application.addTest("Figure House - CompoundCommand", selectTestCompoundCommandOptionListener);
         application.addTest("Count commands - Visitor", selectCountCommandOptionListener);
         application.addTest("Count drivers - Visitor", selectCountDriverOptionListener);
+        application.addTest("Validate Canvas Bounds", selectValidateCanvasBoundsOptionListener);
     }
 
     /**
@@ -76,6 +81,22 @@ public class TestJobs2dApp {
         application.addTest("Scale 2.0 command", new SelectRunCurrentScaledUpCommandOptionListener());
         application.addTest("Scale 0.5 command", new SelectRunCurrentScaledDownCommandOptionListener());
         application.addTest("Run command", new SelectRunCurrentCommandOptionListener(DriverFeature.getDriverManager()));
+
+        CommandManager manager = CommandsFeature.getDriverCommandManager();
+        application.addTest("Scale x2",
+                new SelectCommandTransformationOptionListener(manager, new ScaleStrategy(2)));
+        application.addTest("Rotate 90 degrees",
+                new SelectCommandTransformationOptionListener(manager, new RotateStrategy(90)));
+        application.addTest("Flip",
+                new SelectCommandTransformationOptionListener(manager, new FlipStrategy(true, false)));
+        application.addTest("Shift (right: 15)",
+                new SelectCommandTransformationOptionListener(manager, new ShiftStrategy(15, 0)));
+        application.addTest("Shift (down: 15)",
+                new SelectCommandTransformationOptionListener(manager, new ShiftStrategy(0, 15)));
+        application.addTest("Shear (X: 0.5)",
+                new SelectCommandTransformationOptionListener(manager, new ShearStrategy(0.5, 0)));
+        application.addTest("Shear (Y: 0.5)",
+                new SelectCommandTransformationOptionListener(manager, new ShearStrategy(0, 0.5)));
     }
 
     /**
@@ -84,6 +105,8 @@ public class TestJobs2dApp {
      * @param application Application context.
      */
     private static void setupDrivers(Application application) {
+        DriverFeature.setConfigurationStrategy(new MonitoringDriverConfigurationStrategy());
+
         VisitableJob2dDriver loggerDriver = new LoggerDriver(logger);
         DriverFeature.addDriver("Logger driver", loggerDriver);
 
@@ -116,15 +139,6 @@ public class TestJobs2dApp {
         SelectLoadRecordedCommandOptionListener selectLoadRecordedCommandOptionListener = new SelectLoadRecordedCommandOptionListener(recordingDriver);
         application.addTest("Stop recording & Load recorded command", selectLoadRecordedCommandOptionListener);
         DriverFeature.addDriver("Recording Driver", recordingDriver);
-        
-        // Add monitored versions of drivers
-        UsageTrackingDriverDecorator monitoredBasicLine = new UsageTrackingDriverDecorator(basicLineDriver, "Basic line [monitored]");
-        MonitoringFeature.registerMonitoredDriver("Basic line [monitored]", monitoredBasicLine);
-        DriverFeature.addDriver("Basic line [monitored]", monitoredBasicLine);
-
-        UsageTrackingDriverDecorator monitoredSpecialLine = new UsageTrackingDriverDecorator(specialLineDriver, "Special line [monitored]");
-        MonitoringFeature.registerMonitoredDriver("Special line [monitored]", monitoredSpecialLine);
-        DriverFeature.addDriver("Special line [monitored]", monitoredSpecialLine);
 
         // Set default driver
         DriverFeature.getDriverManager().setCurrentDriver(basicLineDriver);
@@ -166,6 +180,12 @@ public class TestJobs2dApp {
                 CommandsFeature.getDriverCommandManager()
         );
         CommandsFeature.getDriverCommandManager().getChangePublisher().addSubscriber(previewObserver);
+        
+        CommandHistoryWindow historyWindow = new CommandHistoryWindow(
+                CommandsFeature.getCommandHistory(),
+                CommandsFeature.getDriverCommandManager()
+        );
+        application.addWindowComponent("Command History", historyWindow);
     }
 
     /**
@@ -183,7 +203,7 @@ public class TestJobs2dApp {
 
     /**
      * Setup view options (zoom, pan, reset).
-     * 
+     *
      * @param application Application context.
      */
     private static void setupView(Application application) {
