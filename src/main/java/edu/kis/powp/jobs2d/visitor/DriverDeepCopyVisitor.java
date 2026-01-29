@@ -3,15 +3,16 @@ package edu.kis.powp.jobs2d.visitor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import edu.kis.legacy.drawer.shape.ILine;
 
 import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.CanvasLimitedDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
 import edu.kis.powp.jobs2d.drivers.RecordingDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.drivers.transformation.TransformerDriverDecorator;
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
-import edu.kis.legacy.drawer.shape.ILine;
 
 public class DriverDeepCopyVisitor implements DriverVisitor {
 
@@ -72,6 +73,13 @@ public class DriverDeepCopyVisitor implements DriverVisitor {
         usageTrackingDriverDecorator.getDelegate().accept(this);
         VisitableJob2dDriver targetCopy = copy;
         copy = new UsageTrackingDriverDecorator(targetCopy, usageTrackingDriverDecorator.getLabel());
+    }
+
+    @Override
+    public void visit(CanvasLimitedDriverDecorator canvasLimitedDriverDecorator) {
+        canvasLimitedDriverDecorator.getTargetDriver().accept(this);
+        VisitableJob2dDriver targetCopy = copy;
+        copy = new CanvasLimitedDriverDecorator(targetCopy, canvasLimitedDriverDecorator.getOnCanvasExceededStrategy());
     }
 
     @Override

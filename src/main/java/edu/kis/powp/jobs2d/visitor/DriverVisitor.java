@@ -3,6 +3,7 @@ package edu.kis.powp.jobs2d.visitor;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
 import edu.kis.powp.jobs2d.drivers.AnimatedDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.CanvasLimitedDriverDecorator;
 
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.drivers.transformation.TransformerDriverDecorator;
@@ -63,4 +64,10 @@ public interface DriverVisitor {
      * @param usageTrackingDriverDecorator the driver decorator to visit
      */
     void visit(UsageTrackingDriverDecorator usageTrackingDriverDecorator);
+
+    /**
+     * Visits a CanvasLimitedDriverDecorator.
+     * @param canvasLimitedDriverDecorator the driver decorator to visit
+     */
+    void visit(CanvasLimitedDriverDecorator canvasLimitedDriverDecorator);
 }

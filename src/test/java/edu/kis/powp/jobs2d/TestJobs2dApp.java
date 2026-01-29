@@ -24,6 +24,8 @@ import edu.kis.powp.jobs2d.drivers.LoggerDriver;
 import edu.kis.powp.jobs2d.drivers.RecordingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
+import edu.kis.powp.jobs2d.drivers.strategy.OnCanvasExceededLogWarning;
+import edu.kis.powp.jobs2d.drivers.strategy.OnCanvasExceededStrategy;
 import edu.kis.powp.jobs2d.drivers.transformation.*;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 import edu.kis.powp.jobs2d.events.*;
@@ -149,6 +151,11 @@ public class TestJobs2dApp {
         VisitableJob2dDriver flippedDriver = DriverFeatureFactory.createFlipDriver(basicLineDriver, true, false);
         DriverFeature.addDriver("Basic Line + Flip Horizontal", flippedDriver);
 
+        OnCanvasExceededStrategy onCanvasExceededStrategy = new OnCanvasExceededLogWarning();
+        CanvasLimitedDriverDecorator canvasLimitedDriver = new CanvasLimitedDriverDecorator(basicLineDriver, onCanvasExceededStrategy);
+        DriverFeature.addDriver("Canvas-Limited Driver", canvasLimitedDriver);
+
+        DriverFeature.updateDriverInfo();
     }
 
     private static void setupWindows(Application application) {
