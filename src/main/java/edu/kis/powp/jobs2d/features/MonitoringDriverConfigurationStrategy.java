@@ -1,6 +1,6 @@
 package edu.kis.powp.jobs2d.features;
 
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.maintenance.UsageTrackingDriverDecorator;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
 
 /**

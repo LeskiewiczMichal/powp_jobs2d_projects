@@ -60,6 +60,10 @@ public class DriverFeature implements IFeature {
         configStrategy = strategy;
     }
 
+    public static DriverConfigurationStrategy getConfigurationStrategy() {
+        return configStrategy;
+    }
+
     @Override
     public String getName() {
         return "Driver";

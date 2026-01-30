@@ -50,15 +50,8 @@ import edu.kis.powp.jobs2d.events.SelectTestFigureOptionListener;
 import edu.kis.powp.jobs2d.events.SelectValidateCanvasBoundsOptionListener;
 import edu.kis.powp.jobs2d.events.SelectZoomInOptionListener;
 import edu.kis.powp.jobs2d.events.SelectZoomOutOptionListener;
-import edu.kis.powp.jobs2d.features.CanvasFeature;
-import edu.kis.powp.jobs2d.features.CommandsFeature;
-import edu.kis.powp.jobs2d.features.DrawerFeature;
-import edu.kis.powp.jobs2d.features.DriverFeature;
-import edu.kis.powp.jobs2d.features.FeatureManager;
-import edu.kis.powp.jobs2d.features.MonitoringDriverConfigurationStrategy;
-import edu.kis.powp.jobs2d.features.MonitoringFeature;
-import edu.kis.powp.jobs2d.features.ViewFeature;
 import edu.kis.powp.jobs2d.visitor.VisitableJob2dDriver;
+import edu.kis.powp.jobs2d.features.*;
 
 public class TestJobs2dApp {
     private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -164,6 +157,10 @@ public class TestJobs2dApp {
                 recordingDriver);
         application.addTest("Stop recording & Load recorded command", selectLoadRecordedCommandOptionListener);
         DriverFeature.addDriver("Recording Driver", recordingDriver);
+
+        // Device maintenance panel
+        VisitableJob2dDriver driver = new LineDriverAdapter(DrawerFeature.getDrawerController(), LineFactory.getBasicLine(), "basic");
+        MonitoringFeature.addDriverWithMaintenance(application, driver, 500, 40, 40);
 
         // Set default driver
         DriverFeature.getDriverManager().setCurrentDriver(basicLineDriver);

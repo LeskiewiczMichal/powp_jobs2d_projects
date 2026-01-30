@@ -1,7 +1,7 @@
 package edu.kis.powp.jobs2d.visitor;
 
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.maintenance.UsageTrackingDriverDecorator;
 
 public class AdditionalVisitorTest {
     public static void main(String[] args) {

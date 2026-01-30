@@ -7,7 +7,7 @@ import edu.kis.powp.jobs2d.drivers.CanvasLimitedDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.DriverComposite;
 import edu.kis.powp.jobs2d.drivers.LoggerDriver;
 import edu.kis.powp.jobs2d.drivers.RecordingDriverDecorator;
-import edu.kis.powp.jobs2d.drivers.UsageTrackingDriverDecorator;
+import edu.kis.powp.jobs2d.drivers.maintenance.UsageTrackingDriverDecorator;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.drivers.transformation.TransformerDriverDecorator;
 
@@ -20,7 +20,7 @@ public class DriverCounterVisitor implements DriverVisitor {
     private int canvasLimitedDriverDecoratorCount = 0;
     private int usageTrackingDecoratorCount = 0;
     private int recordingDriverDecoratorCount = 0;
-    
+
     private DriverCounterVisitor() {
     }
 
