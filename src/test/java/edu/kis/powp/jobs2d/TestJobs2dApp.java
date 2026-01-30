@@ -160,7 +160,7 @@ public class TestJobs2dApp {
 
         // Device maintenance panel
         VisitableJob2dDriver driver = new LineDriverAdapter(DrawerFeature.getDrawerController(), LineFactory.getBasicLine(), "basic");
-        MaintenanceFeature.setup(application, driver, 500, 40, 40);
+        MonitoringFeature.addDriverWithMaintenance(application, driver, 500, 40, 40);
 
         // Set default driver
         DriverFeature.getDriverManager().setCurrentDriver(basicLineDriver);
